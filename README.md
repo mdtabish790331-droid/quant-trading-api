@@ -167,3 +167,8 @@ python export_csv.py
 | Price Reaction | `/prices/{stock}`, `/events/{stock}` |
 | Signal Fusion | `/prices/{stock}`, `/alt_data/{stock}`, `/sectors` |
 | Execution & Order | `/prices/{stock}`, `/events/{stock}` |
+
+GitHub par update karo:
+git add .
+git commit -m "Added README"
+git push
