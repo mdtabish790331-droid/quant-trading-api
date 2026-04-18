@@ -1,5 +1,4 @@
-README GitHub par dikhti hai — yeh banate hain!
-VS Code mein README.md file kholo aur poora content replace karo:
+
 markdown# 📈 Quant Trading Market Data API
 
 A production-grade market data pipeline + API system built for
