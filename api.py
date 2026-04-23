@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 import psycopg2
 from datetime import date
 import os
+from fastapi.responses import HTMLResponse
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -278,3 +279,105 @@ def get_all_features(stock: str):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+@app.get("/dashboard", response_class=HTMLResponse)
+def dashboard():
+    return """
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quant Trading API</title>
+    <style>
+        body { font-family: Arial; max-width: 800px; margin: 40px auto; padding: 20px; }
+        h1 { color: #333; }
+        .form-group { margin: 15px 0; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select { padding: 8px; width: 100%; border: 1px solid #ddd; border-radius: 4px; }
+        button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        pre { background: #f4f4f4; padding: 15px; border-radius: 4px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>📈 Quant Trading API</h1>
+
+    <div class="form-group">
+        <label>Stock:</label>
+        <select id="stock">
+            <option>RELIANCE.NS</option>
+            <option>TCS.NS</option>
+            <option>HDFCBANK.NS</option>
+            <option>INFY.NS</option>
+            <option>HINDUNILVR.NS</option>
+            <option>ICICIBANK.NS</option>
+            <option>SBIN.NS</option>
+            <option>BHARTIARTL.NS</option>
+            <option>KOTAKBANK.NS</option>
+            <option>LT.NS</option>
+            <option>AXISBANK.NS</option>
+            <option>WIPRO.NS</option>
+            <option>HCLTECH.NS</option>
+            <option>ASIANPAINT.NS</option>
+            <option>MARUTI.NS</option>
+            <option>TITAN.NS</option>
+            <option>SUNPHARMA.NS</option>
+            <option>ULTRACEMCO.NS</option>
+            <option>BAJFINANCE.NS</option>
+            <option>ITC.NS</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Start Date:</label>
+        <input type="date" id="start_date" value="2024-01-01">
+    </div>
+
+    <div class="form-group">
+        <label>End Date:</label>
+        <input type="date" id="end_date" value="2024-12-31">
+    </div>
+
+    <div class="form-group">
+        <label>Data Type:</label>
+        <select id="data_type">
+            <option value="prices">Price Data</option>
+            <option value="events">Events & News</option>
+            <option value="alt_data">Alternative Data</option>
+        </select>
+    </div>
+
+    <button onclick="fetchData()">Fetch Data</button>
+
+    <h3 id="result_title"></h3>
+    <pre id="result">Data will appear here...</pre>
+
+    <script>
+        async function fetchData() {
+            const stock = document.getElementById('stock').value;
+            const start = document.getElementById('start_date').value;
+            const end = document.getElementById('end_date').value;
+            const type = document.getElementById('data_type').value;
+
+            let url = '';
+            if (type === 'prices') {
+                url = `/prices/${stock}?start_date=${start}&end_date=${end}`;
+            } else if (type === 'events') {
+                url = `/events/${stock}?start_date=${start}&end_date=${end}`;
+            } else {
+                url = `/alt_data/${stock}`;
+            }
+
+            document.getElementById('result').textContent = 'Loading...';
+            document.getElementById('result_title').textContent = `${stock} — ${type}`;
+
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+            } catch(e) {
+                document.getElementById('result').textContent = 'Error: ' + e;
+            }
+        }
+    </script>
+</body>
+</html>
+"""        
