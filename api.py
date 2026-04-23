@@ -176,9 +176,10 @@ def get_sector_data(sector_name: str):
             SELECT sector_name, industry_name, num_companies,
                    median_pe, sales_growth, opm, roce, median_return
             FROM sectors
-            WHERE LOWER(sector_name) LIKE LOWER(%s)
+            WHERE LOWER(industry_name) = LOWER(%s)
+            OR LOWER(sector_name) LIKE LOWER(%s)
             ORDER BY sector_name
-        """, (f"%{sector_name}%",))
+        """, (sector_name, f"%{sector_name}%"))
         rows = cursor.fetchall()
         cursor.close()
         conn.close()
